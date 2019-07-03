@@ -24,7 +24,13 @@ type DataInput struct {
 //Hdr : has the top level data
 type Hdr struct {
 	XMLName xml.Name `xml:"hdr"`
-	Values  []Value  `xml:",any"`
+	// Values    []Value   `xml:",any"`
+	ProgramID string `xml:"programId"`
+	Action    string `xml:"action"`
+	EsbFormat string `xml:"esbFormat"`
+	DateTime  string `xml:"dateTime"`
+	CalledBy  string `xml:"calledBy"`
+	User      string `xml:"user"`
 }
 
 //Payload : Contains all of the data
@@ -54,7 +60,6 @@ type Value struct {
 
 func main() {
 	processXML(findFile())
-	fmt.Println("The End********************")
 } // /Users/brianmarx/Desktop/baselineFake.txt
 
 func findFile() []byte {
@@ -81,16 +86,22 @@ func processXML(xmlFile []byte) {
 	if error != nil {
 		fmt.Println(error)
 	}
-	processDataInput(root.DataInput, xmlFile)
+	_, er := processDataInput(root.DataInput)
+	if er != nil {
+		fmt.Println(er)
+	}
+	// fmt.Println(m)
 }
 
-func processDataInput(input []DataInput, xmlFile []byte) error {
+func processDataInput(input []DataInput) (map[string]DataInput, error) {
 	m := make(map[string]DataInput)
+	n := make(map[string]Hdr)
 	for index, element := range input {
 		fmt.Println("New DataInput")
 		m[element.Payload.Record.RecKey] = input[index]
+		n[element.Payload.Record.RecKey] = input[index].Hdr
 	}
-
-	fmt.Println(m)
-	return nil
+	fmt.Println(n)
+	fmt.Printf(" There are %d elements in the map\n", len(m))
+	return m, nil
 }

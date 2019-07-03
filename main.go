@@ -16,9 +16,9 @@ type Root struct {
 
 //DataInput : contain the meat of the data
 type DataInput struct {
-	XMLName xml.Name  `xml:"dataInput"`
-	Hdr     []Hdr     `xml:"hdr"`
-	Payload []Payload `xml:"payload"`
+	XMLName xml.Name `xml:"dataInput"`
+	Hdr     Hdr      `xml:"hdr"`
+	Payload Payload  `xml:"payload"`
 }
 
 //Hdr : has the top level data
@@ -30,13 +30,20 @@ type Hdr struct {
 //Payload : Contains all of the data
 type Payload struct {
 	XMLName xml.Name `xml:"payload"`
+	Record  Record   `xml:"record"`
+}
+
+//Control : Has data related to the control of the program
+type Control struct {
+	XMLName xml.Name `xml:"control"`
 	Values  []Value  `xml:",any"`
 }
 
 //Record : Contains all of the very important data
 type Record struct {
 	XMLName xml.Name `xml:"record"`
-	Values  []Value  `xml:",any"`
+	Values  []string `xml:",any"`
+	RecKey  string   `xml:"RECORD.KEY"`
 }
 
 //Value : contains the nodes of the payload
@@ -78,18 +85,12 @@ func processXML(xmlFile []byte) {
 }
 
 func processDataInput(input []DataInput, xmlFile []byte) error {
-	var hdr Hdr
-	xml.Unmarshal(xmlFile, &hdr)
+	m := make(map[string]DataInput)
 	for index, element := range input {
-		fmt.Println(index)
-		fmt.Println(element)
+		fmt.Println("New DataInput")
+		m[element.Payload.Record.RecKey] = input[index]
 	}
 
-	for index, element := range hdr.Values {
-		fmt.Println("inside hdr loop")
-		fmt.Println(index)
-		fmt.Println(element)
-	}
-
+	fmt.Println(m)
 	return nil
 }

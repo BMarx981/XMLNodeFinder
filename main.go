@@ -42,7 +42,10 @@ type Payload struct {
 //Control : Has data related to the control of the program
 type Control struct {
 	XMLName xml.Name `xml:"control"`
-	Values  []Value  `xml:",any"`
+	// Values  []Value  `xml:",any"`
+	Dts    string `xml:"dts"`
+	Fgname string `xml:"fgname"`
+	Tranid string `xml:"tranid"`
 }
 
 //Record : Contains all of the very important data
@@ -90,18 +93,33 @@ func processXML(xmlFile []byte) {
 	if er != nil {
 		fmt.Println(er)
 	}
-	// fmt.Println(m)
+	update, store, delete := countActions(root.DataInput)
+	fmt.Printf("There are %d updates\nThere are %d stores\nThere are %d deletes", update, store, delete)
 }
 
 func processDataInput(input []DataInput) (map[string]DataInput, error) {
 	m := make(map[string]DataInput)
 	n := make(map[string]Hdr)
 	for index, element := range input {
-		fmt.Println("New DataInput")
 		m[element.Payload.Record.RecKey] = input[index]
 		n[element.Payload.Record.RecKey] = input[index].Hdr
 	}
-	fmt.Println(n)
 	fmt.Printf(" There are %d elements in the map\n", len(m))
 	return m, nil
+}
+
+func countActions(input []DataInput) (int, int, int) {
+	update, store, delete := 0, 0, 0
+	for _, k := range input {
+
+		switch k.Hdr.Action {
+		case "UPDATE":
+			update = update + 1
+		case "STORE":
+			store = store + 1
+		case "DELETE":
+			delete = delete + 1
+		}
+	}
+	return update, store, delete
 }

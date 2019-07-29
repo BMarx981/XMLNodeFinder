@@ -42,10 +42,9 @@ type Payload struct {
 //Control : Has data related to the control of the program
 type Control struct {
 	XMLName xml.Name `xml:"control"`
-	// Values  []Value  `xml:",any"`
-	Dts    string `xml:"dts"`
-	Fgname string `xml:"fgname"`
-	Tranid string `xml:"tranid"`
+	Dts     string   `xml:"dts"`
+	Fgname  string   `xml:"fgname"`
+	Tranid  string   `xml:"tranid"`
 }
 
 //Record : Contains all of the very important data
@@ -94,24 +93,28 @@ func processXML(xmlFile []byte) {
 		fmt.Println(er)
 	}
 	update, store, delete := countActions(root.DataInput)
-	fmt.Printf("There are %d updates\nThere are %d stores\nThere are %d deletes", update, store, delete)
+	fmt.Printf("\nThere are %d updates\nThere are %d stores\nThere are %d deletes", update, store, delete)
 }
 
 func processDataInput(input []DataInput) (map[string]DataInput, error) {
+	// list := make()
 	m := make(map[string]DataInput)
 	n := make(map[string]Hdr)
+	p := make(map[string]Payload)
 	for index, element := range input {
-		m[element.Payload.Record.RecKey] = input[index]
-		n[element.Payload.Record.RecKey] = input[index].Hdr
+		ele := element.Payload.Record.RecKey
+		m[ele] = input[index]
+		n[ele] = input[index].Hdr
+		p[ele] = input[index].Payload
 	}
-	fmt.Printf(" There are %d elements in the map\n", len(m))
+	// fmt.Println(p)
+	fmt.Printf("There are %d elements in the File\n", len(input))
 	return m, nil
 }
 
 func countActions(input []DataInput) (int, int, int) {
 	update, store, delete := 0, 0, 0
 	for _, k := range input {
-
 		switch k.Hdr.Action {
 		case "UPDATE":
 			update = update + 1
@@ -122,4 +125,8 @@ func countActions(input []DataInput) (int, int, int) {
 		}
 	}
 	return update, store, delete
+}
+
+func printMap(m interface{}) {
+
 }

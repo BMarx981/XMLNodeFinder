@@ -97,7 +97,6 @@ func processXML(xmlFile []byte) {
 }
 
 func processDataInput(input []DataInput) (map[string]DataInput, error) {
-	// list := make()
 	m := make(map[string]DataInput)
 	n := make(map[string]Hdr)
 	p := make(map[string]Payload)
@@ -107,7 +106,7 @@ func processDataInput(input []DataInput) (map[string]DataInput, error) {
 		n[ele] = input[index].Hdr
 		p[ele] = input[index].Payload
 	}
-	// fmt.Println(p)
+
 	fmt.Printf("There are %d elements in the File\n", len(input))
 	return m, nil
 }

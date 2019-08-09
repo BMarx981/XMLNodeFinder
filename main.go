@@ -100,13 +100,14 @@ func processDataInput(input []DataInput) (map[string]DataInput, error) {
 	m := make(map[string]DataInput)
 	n := make(map[string]Hdr)
 	p := make(map[string]Payload)
+	list := make([]string, 0)
 	for index, element := range input {
 		ele := element.Payload.Record.RecKey
+		list[index] = ele
 		m[ele] = input[index]
 		n[ele] = input[index].Hdr
 		p[ele] = input[index].Payload
 	}
-
 	fmt.Printf("There are %d elements in the File\n", len(input))
 	return m, nil
 }
@@ -127,5 +128,5 @@ func countActions(input []DataInput) (int, int, int) {
 }
 
 func printMap(m interface{}) {
-
+// TODO:
 }
